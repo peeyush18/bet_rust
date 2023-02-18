@@ -4,7 +4,7 @@ use std::{
     time::Instant,
 };
 
-use perf::{add_word_to_trie, init_trie, search_word_line_num};
+use perf::{add_word_to_hash_map, add_word_to_trie, init_hash_map, init_trie, search_word_line_num};
 use radix_trie::Trie;
 use rand::prelude::*;
 
@@ -24,12 +24,13 @@ fn main() {
     // Iterate over the lines of the file, and in this case print them.
     let mut line_num = 0;
     let mut trie_store = init_trie();
+    let mut map_store = init_hash_map();
     for line in lines {
         // here we get the word and
         let word = line.unwrap();
 
         add_word_to_trie(word.clone(), line_num, &mut trie_store);
-
+        add_word_to_hash_map(word.clone(), line_num, &mut map_store);
         // println!("{}:{}", line_num, word);
         line_num += 1;
     }
