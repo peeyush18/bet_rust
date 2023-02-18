@@ -1,11 +1,33 @@
-use std::time::Instant;
+use std::{
+    fs::{self, File},
+    io::{self, BufRead, BufReader},
+    time::Instant,
+};
 
 use rand::prelude::*;
 
 const N: usize = 1024;
 
+const word_file: &str = "words_alpha.txt";
+
+fn read_lines(filename: String) -> io::Lines<BufReader<File>> {
+    // Open the file in read-only mode.
+    let file = File::open(filename).unwrap();
+    // Read the file line by line, and return an iterator of the lines of the file.
+    return io::BufReader::new(file).lines();
+}
+
 fn main() {
-    println!("hello world");
+    let lines = read_lines(word_file.to_string());
+    // Iterate over the lines of the file, and in this case print them.
+    let mut line_num = 0;
+    for line in lines {
+        // here we get the word and
+        println!("{}:{}", line_num, line.unwrap());
+        line_num += 1;
+    }
+
+    // println!("hello world");
 }
 
 fn test_perf() {
