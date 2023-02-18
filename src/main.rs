@@ -4,6 +4,8 @@ use std::{
     time::Instant,
 };
 
+use perf::{add_word_to_trie, init_trie, search_word_line_num};
+use radix_trie::Trie;
 use rand::prelude::*;
 
 const N: usize = 1024;
@@ -21,13 +23,38 @@ fn main() {
     let lines = read_lines(word_file.to_string());
     // Iterate over the lines of the file, and in this case print them.
     let mut line_num = 0;
+    let mut trie_store = init_trie();
     for line in lines {
         // here we get the word and
-        println!("{}:{}", line_num, line.unwrap());
+        let word = line.unwrap();
+
+        add_word_to_trie(word.clone(), line_num, &mut trie_store);
+
+        // println!("{}:{}", line_num, word);
         line_num += 1;
     }
 
+    let start = Instant::now();
+    test_perf_trie(&trie_store);
+    println!("time taken by trie {}", start.elapsed().as_millis());
+
     // println!("hello world");
+}
+
+fn test_perf_trie(store: &Trie<String, i32>) {
+    let lines = read_lines(word_file.to_string());
+    let mut line_num = 0;
+    for line in lines {
+        // here we get the word and
+        let word = line.unwrap();
+
+        let expected_line = search_word_line_num(&word, &store).unwrap_or(-1);
+        if expected_line.is_negative() || expected_line != line_num {
+            println!("{}:{}", line_num, word);
+        }
+
+        line_num += 1;
+    }
 }
 
 fn test_perf() {
